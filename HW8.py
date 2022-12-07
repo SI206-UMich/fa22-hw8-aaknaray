@@ -2,30 +2,66 @@ import matplotlib.pyplot as plt
 import os
 import sqlite3
 import unittest
+from collections import OrderedDict
 
 def get_restaurant_data(db_filename):
-    """
-    This function accepts the file name of a database as a parameter and returns a list of
-    dictionaries. The key:value pairs should be the name, category, building, and rating
-    of each restaurant in the database.
-    """
-    pass
+    db = sqlite3.connect(db_filename)
+    db.row_factory = sqlite3.Row
+    building_id = db.execute("UPDATE restaurants SET building_id = (SELECT building FROM buildings WHERE buildings.id = restaurants.building_id)").fetchall()
+    category_id = db.execute("UPDATE restaurants SET category_id = (SELECT category FROM categories WHERE categories.id = restaurants.category_id)").fetchall()
+    building = db.execute("ALTER TABLE restaurants RENAME COLUMN building_id TO building")
+    category = db.execute("ALTER TABLE restaurants RENAME COLUMN category_id TO category")
+    results = db.execute("SELECT * FROM restaurants").fetchall()
+    
+    end = []
+    for item in results:
+        i = {k: item[k] for k in item.keys() if k != "id"}
+        end.append(i)
+    return end
 
 def barchart_restaurant_categories(db_filename):
+    db =sqlite3.connect(db_filename)
+    db.row_factory = sqlite3.Row
+    category_id = db.execute("UPDATE restaurants SET category_id = (SELECT category FROM categories WHERE categories.id = restaurants.category_id)").fetchall()
+    results = db.execute("SELECT category_id, name FROM restaurants").fetchall()
+
+    new = {}
+    lst = []
+    for item in results:
+        for i in item:
+            i = {k: item[k] for k in item.keys() if k != "id"}
+            lst.append(i)
+    for item in lst:
+        if item['category_id'] not in new:
+            new[item['category_id']] = 1
+        else:
+            new[item['category_id']] += 1
+    for k,v in new.items():
+        new[k] = int(new[k]/2)
+    
+    sorted_dict = sorted(new.items(), key=lambda x:x[1], reverse=True)
+    sorted_dict = dict(sorted_dict)
+
+    names = list(sorted_dict.keys())
+    values = list(sorted_dict.values())
+    plt.bar(range(len(sorted_dict)), values, tick_label=names)
+    plt.xticks(rotation=90)
+    plt.show()
+    
+    sorted_new = OrderedDict(sorted(new.items()))
+    return dict(sorted_new)
+
+
+
+            
+
+    
+    
+
     """
     This function accepts a file name of a database as a parameter and returns a dictionary. The keys should be the
     restaurant categories and the values should be the number of restaurants in each category. The function should
     also create a bar chart with restaurant categories and the counts of each category.
-    """
-    pass
-
-#EXTRA CREDIT
-def highest_rated_category(db_filename):#Do this through DB as well
-    """
-    This function finds the average restaurant rating for each category and returns a tuple containing the
-    category name of the highest rated restaurants and the average rating of the restaurants
-    in that category. This function should also create a bar chart that displays the categories along the y-axis
-    and their ratings along the x-axis in descending order (by rating).
     """
     pass
 
@@ -71,10 +107,10 @@ class TestHW8(unittest.TestCase):
         self.assertEqual(cat_data, self.cat_dict)
         self.assertEqual(len(cat_data), 14)
 
-    def test_highest_rated_category(self):
-        best_category = highest_rated_category('South_U_Restaurants.db')
-        self.assertIsInstance(best_category, tuple)
-        self.assertEqual(best_category, self.best_category)
+    # def test_highest_rated_category(self):
+    #     best_category = highest_rated_category('South_U_Restaurants.db')
+    #     self.assertIsInstance(best_category, tuple)
+    #     self.assertEqual(best_category, self.best_category)
 
 if __name__ == '__main__':
     main()
