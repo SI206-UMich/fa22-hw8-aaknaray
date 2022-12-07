@@ -94,8 +94,6 @@ class TestHW8(unittest.TestCase):
         self.assertEqual(cat_data, self.cat_dict)
         self.assertEqual(len(cat_data), 14)
 
-
-
 if __name__ == '__main__':
     main()
     unittest.main(verbosity=2)
