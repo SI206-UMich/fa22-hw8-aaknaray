@@ -56,7 +56,6 @@ def main():
     get_restaurant_data('South_U_Restaurants.db')
     barchart_restaurant_categories('South_U_Restaurants.db')
 
-
 class TestHW8(unittest.TestCase):
     def setUp(self):
         self.rest_dict = {
@@ -95,10 +94,7 @@ class TestHW8(unittest.TestCase):
         self.assertEqual(cat_data, self.cat_dict)
         self.assertEqual(len(cat_data), 14)
 
-    # def test_highest_rated_category(self):
-    #     best_category = highest_rated_category('South_U_Restaurants.db')
-    #     self.assertIsInstance(best_category, tuple)
-    #     self.assertEqual(best_category, self.best_category)
+
 
 if __name__ == '__main__':
     main()
