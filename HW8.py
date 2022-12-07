@@ -47,27 +47,15 @@ def barchart_restaurant_categories(db_filename):
     plt.bar(range(len(sorted_dict)), values, tick_label=names)
     plt.xticks(rotation=90)
     plt.show()
-    
+
     sorted_new = OrderedDict(sorted(new.items()))
     return dict(sorted_new)
 
-
-
-            
-
-    
-    
-
-    """
-    This function accepts a file name of a database as a parameter and returns a dictionary. The keys should be the
-    restaurant categories and the values should be the number of restaurants in each category. The function should
-    also create a bar chart with restaurant categories and the counts of each category.
-    """
-    pass
-
 #Try calling your functions here
 def main():
-    pass
+    get_restaurant_data('South_U_Restaurants.db')
+    barchart_restaurant_categories('South_U_Restaurants.db')
+
 
 class TestHW8(unittest.TestCase):
     def setUp(self):
